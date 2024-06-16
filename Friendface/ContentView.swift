@@ -8,15 +8,29 @@
 import SwiftUI
 
 struct ContentView: View {
+    @State private var users = [User]()
+    
     var body: some View {
-        Button("Download") {
-            Task {
+        NavigationStack {
+            List(users) { user in
+                HStack {
+                    Text(user.name)
+                    Spacer()
+                    Circle()
+                        .fill(user.isActive ? Color.green : Color.gray)
+                        .frame(width: 10, height: 10)
+                }
+            }
+            .task {
                 await downloadData()
             }
+            .navigationTitle("Friendface")
         }
     }
     
     func downloadData() async {
+        guard users.isEmpty else { return }
+        
         let url = URL(string: "https://www.hackingwithswift.com/samples/friendface.json")!
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
@@ -27,7 +41,7 @@ struct ContentView: View {
             let decoder = JSONDecoder()
             decoder.dateDecodingStrategy = .iso8601
             
-            let decodedData = try decoder.decode([User].self, from: data)
+            users = try decoder.decode([User].self, from: data)
         } catch {
             print("Error: \(error)")
         }

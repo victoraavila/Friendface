@@ -8,7 +8,7 @@
 import Foundation
 import SwiftData
 
-struct User: Codable {
+struct User: Identifiable, Codable {
     var id: UUID
     var isActive: Bool
     var name: String
