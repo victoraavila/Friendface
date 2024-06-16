@@ -9,13 +9,24 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        Button("Download") {
+            Task {
+                await downloadData()
+            }
         }
-        .padding()
+    }
+    
+    func downloadData() async {
+        let url = URL(string: "https://www.hackingwithswift.com/samples/friendface.json")!
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        
+        do {
+            let (data, _) = try await URLSession.shared.data(for: request)
+            let decodedData = try JSONDecoder().decode([User].self, from: data)
+        } catch {
+            print("Error: \(error)")
+        }
     }
 }
 
