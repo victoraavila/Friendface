@@ -10,8 +10,64 @@ import SwiftUI
 struct ProfileView: View {
     let user: User
     
+    @ScaledMetric var width: CGFloat = 20
+    
     var body: some View {
-        Text(user.name)
+        Image("profile")
+            .resizable()
+            .scaledToFit()
+            .padding(.bottom)
+        
+        VStack(alignment: .leading) {
+            Text(user.name)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .font(.title)
+                .fontWeight(.bold)
+                .foregroundStyle(Color.blue)
+                .padding(.horizontal)
+            
+            VStack(alignment: .leading) {
+                HStack {
+                    Image(systemName: "bag.fill")
+                        .frame(width: width, alignment: .center)
+                    Text("Works at \(user.company)")
+                }
+                HStack {
+                    Image(systemName: "birthday.cake.fill")
+                        .frame(width: width, alignment: .center)
+                    Text("\(user.age) years old")
+                }
+                
+                CustomDividerView()
+                
+                Text("Friends")
+                    .font(.title.bold())
+                    .padding(.bottom, 5) // So it stays 5 points away of the thing below it
+            }
+            .padding(.horizontal)
+            
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack {
+                    ForEach(user.friends) { friend in
+                        ZStack {
+                            Circle()
+                                .frame(width: 100)
+                                .clipShape(.capsule)
+                                .foregroundStyle(.tertiary)
+                                .overlay( // To draw something over it
+                                    Capsule()
+                                        .strokeBorder(.blue, lineWidth: 3)
+                                )
+                            
+                            Text(friend.name)
+                        }
+                    }
+                }
+                .padding(.horizontal)
+            }
+            
+            Spacer()
+        }
     }
 }
 
