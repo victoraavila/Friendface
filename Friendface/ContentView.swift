@@ -27,7 +27,7 @@ struct ContentView: View {
                 await downloadData()
             }
             .navigationDestination(for: User.self) { user in
-                ProfileView(user: user)
+                ProfileView(user: user, allUsers: users)
             }
             .navigationTitle("Friendface")
         }

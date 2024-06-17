@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ProfileView: View {
     let user: User
+    let allUsers: [User]
     
     @ScaledMetric var width: CGFloat = 20
     
@@ -49,17 +50,22 @@ struct ProfileView: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack {
                     ForEach(user.friends) { friend in
-                        ZStack {
-                            Circle()
-                                .frame(width: 100)
-                                .clipShape(.capsule)
-                                .foregroundStyle(.tertiary)
-                                .overlay( // To draw something over it
-                                    Capsule()
-                                        .strokeBorder(.blue, lineWidth: 3)
-                                )
-                            
-                            Text(friend.name)
+                        if let friendUser = getUserById(friend.id) {
+                            NavigationLink(destination: ProfileView(user: friendUser, allUsers: allUsers)) {
+                                ZStack {
+                                    Circle()
+                                        .frame(width: 100)
+                                        .clipShape(.capsule)
+                                        .foregroundStyle(.tertiary)
+                                        .overlay( // To draw something over it
+                                            Capsule()
+                                                .strokeBorder(.blue, lineWidth: 3)
+                                        )
+                                    
+                                    Text(friend.name.components(separatedBy: " ").joined(separator: "\n"))
+                                        .frame(alignment: .center)
+                                }
+                            }
                         }
                     }
                 }
@@ -69,6 +75,10 @@ struct ProfileView: View {
             Spacer()
         }
     }
+    
+    func getUserById(_ id: UUID) -> User? {
+        return allUsers.first { $0.id == id }
+    }
 }
 
 #Preview {
@@ -76,12 +86,12 @@ struct ProfileView: View {
 }
 
 private struct PreviewWrapper: View {
-    @State private var user: User?
+    @State private var users: [User] = []
     
     var body: some View {
         Group {
-            if let user = user {
-                ProfileView(user: user)
+            if let firstUser = users.first {
+                ProfileView(user: firstUser, allUsers: users)
             } else {
                 ProgressView()
             }
@@ -103,8 +113,8 @@ private struct PreviewWrapper: View {
             decoder.dateDecodingStrategy = .iso8601
             
             let users = try decoder.decode([User].self, from: data)
-            if let firstUser = users.first {
-                user = firstUser
+            DispatchQueue.main.async {
+                self.users = users
             }
         } catch {
             print("Preview Error: \(error)")

@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Friend: Codable, Identifiable {
+struct Friend: Identifiable, Codable, Hashable {
     enum CodingKeys: String, CodingKey {
         case id
         case name
