@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import SwiftData
 
 struct Friend: Codable {
     enum CodingKeys: String, CodingKey {

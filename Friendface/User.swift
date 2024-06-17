@@ -6,9 +6,8 @@
 //
 
 import Foundation
-import SwiftData
 
-struct User: Identifiable, Codable {
+struct User: Identifiable, Codable, Hashable {
     var id: UUID
     var isActive: Bool
     var name: String
@@ -20,4 +19,14 @@ struct User: Identifiable, Codable {
     var registered: Date
     var tags: [String]
     var friends: [Friend]
+    
+    // Implementing Equatable
+    static func == (lhs: User, rhs: User) -> Bool {
+        lhs.id == rhs.id
+    }
+
+    // Implementing Hashable
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
 }
