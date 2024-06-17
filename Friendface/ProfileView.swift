@@ -38,6 +38,11 @@ struct ProfileView: View {
                         .frame(width: width, alignment: .center)
                     Text("\(user.age) years old")
                 }
+                HStack {
+                    Image(systemName: "star.fill")
+                        .frame(width: width, alignment: .center)
+                    Text("Created on \(user.registered.formatted(.dateTime.month().year()))")
+                }
                 
                 CustomDividerView()
                 
