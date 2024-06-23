@@ -5,10 +5,12 @@
 //  Created by Víctor Ávila on 16/06/24.
 //
 
+import SwiftData
 import SwiftUI
 
 struct ContentView: View {
-    @State private var users = [User]()
+    @Environment(\.modelContext) var modelContext
+    @Query(sort: [SortDescriptor(\User.isActive, order: .reverse), SortDescriptor(\User.name)]) var users: [User]
     
     var body: some View {
         NavigationStack {
@@ -46,24 +48,16 @@ struct ContentView: View {
             let decoder = JSONDecoder()
             decoder.dateDecodingStrategy = .iso8601
             
-            users = try decoder.decode([User].self, from: data)
-            sortUsers()
+            let decodedUsers = try decoder.decode([User].self, from: data)
+            for user in decodedUsers {
+                modelContext.insert(user)
+            }
         } catch {
             print("Error: \(error)")
         }
     }
-    
-    func sortUsers() {
-        users.sort { user1, user2 in
-            if user1.isActive != user2.isActive {
-                return user1.isActive ? true : false
-            } else {
-                return user1.name < user2.name
-            }
-        }
-    }
 }
 
-#Preview {
-    ContentView()
-}
+//#Preview {
+//    ContentView()
+//}
