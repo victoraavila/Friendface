@@ -89,7 +89,7 @@ struct ProfileView: View {
 
 #Preview {
     do {
-        let config = ModelConfiguration(isStoredInMemoryOnly: true) // don't write anything to disk here
+        let config = ModelConfiguration(isStoredInMemoryOnly: true)
         let container = try ModelContainer(for: User.self, configurations: config)
         
         let userStr = """
@@ -121,69 +121,39 @@ struct ProfileView: View {
                 ]
             },
             {
-                    "id": "91b5be3d-9a19-4ac2-b2ce-89cc41884ed0",
-                    "isActive": true,
-                    "name": "Hawkins Patel",
-                    "age": 27,
-                    "company": "Mazuda",
-                    "email": "hawkinspatel@mazuda.com",
-                    "address": "256 Union Avenue, Baker, New Mexico, 518",
-                    "about": "Consectetur mollit fugiat dolor ea esse reprehenderit enim laboris laboris. Eiusmod consectetur quis cillum tempor veniam deserunt do. Qui ea amet esse qui mollit non non dolor sint consequat ullamco cillum. Sunt aute elit qui elit.",
-                    "registered": "2016-02-15T08:16:28-00:00",
-                    "tags": [
-                        "minim",
-                        "commodo",
-                        "do",
-                        "aliquip",
-                        "elit",
-                        "incididunt",
-                        "pariatur"
-                    ],
-                    "friends": []
-                }
+                "id": "91b5be3d-9a19-4ac2-b2ce-89cc41884ed0",
+                "isActive": true,
+                "name": "Hawkins Patel",
+                "age": 27,
+                "company": "Mazuda",
+                "email": "hawkinspatel@mazuda.com",
+                "address": "256 Union Avenue, Baker, New Mexico, 518",
+                "about": "Consectetur mollit fugiat dolor ea esse reprehenderit enim laboris laboris. Eiusmod consectetur quis cillum tempor veniam deserunt do. Qui ea amet esse qui mollit non non dolor sint consequat ullamco cillum. Sunt aute elit qui elit.",
+                "registered": "2016-02-15T08:16:28-00:00",
+                "tags": [
+                    "minim",
+                    "commodo",
+                    "do",
+                    "aliquip",
+                    "elit",
+                    "incididunt",
+                    "pariatur"
+                ],
+                "friends": []
+            }
         ]
         """
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
-        let decodedUsers = try decoder.decode([User].self, from: userStr.data(using: .utf8)!)
-        return ProfileView(user: decodedUsers.first!, allUsers: decodedUsers)
+        let decodedUsers = try decoder.decode([User].self, from: Data(userStr.utf8))
+        
+        for user in decodedUsers 
+            container.mainContext.insert(user)
+        }
+        
+        return ProfileView(user: decodedUsers[0], allUsers: decodedUsers)
             .modelContainer(container)
     } catch {
         return Text("Failed to create preview: \(error.localizedDescription)")
     }
-//    @State private var users: [User] = []
-//    
-//    var body: some View {
-//        Group {
-//            if let firstUser = users.first {
-//                ProfileView(user: firstUser, allUsers: users)
-//            } else {
-//                ProgressView()
-//            }
-//        }
-//        .task {
-//            await loadPreviewData()
-//        }
-//    }
-//    
-//    private func loadPreviewData() async {
-//        let url = URL(string: "https://www.hackingwithswift.com/samples/friendface.json")!
-//        var request = URLRequest(url: url)
-//        request.httpMethod = "GET"
-//        
-//        do {
-//            let (data, _) = try await URLSession.shared.data(for: request)
-//            
-//            let decoder = JSONDecoder()
-//            decoder.dateDecodingStrategy = .iso8601
-//            
-//            let users = try decoder.decode([User].self, from: data)
-//            
-//            DispatchQueue.main.async {
-//                self.users = users
-//            }
-//        } catch {
-//            print("Preview Error: \(error)")
-//        }
-//    }
 }
