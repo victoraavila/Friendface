@@ -147,12 +147,14 @@ struct ProfileView: View {
         decoder.dateDecodingStrategy = .iso8601
         let decodedUsers = try decoder.decode([User].self, from: Data(userStr.utf8))
         
-        for user in decodedUsers 
+        for user in decodedUsers {
             container.mainContext.insert(user)
         }
         
-        return ProfileView(user: decodedUsers[0], allUsers: decodedUsers)
-            .modelContainer(container)
+        return NavigationStack {
+            ProfileView(user: decodedUsers[0], allUsers: decodedUsers)
+        }
+        .modelContainer(container)
     } catch {
         return Text("Failed to create preview: \(error.localizedDescription)")
     }
