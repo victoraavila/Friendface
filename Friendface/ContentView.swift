@@ -58,6 +58,7 @@ struct ContentView: View {
     }
 }
 
-//#Preview {
-//    ContentView()
-//}
+#Preview {
+    ContentView()
+        .modelContainer(for: User.self)
+}
